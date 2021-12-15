@@ -1,7 +1,7 @@
 <template>
   <h1>VMail Inbox</h1>
 
-  <!-- <h1>{{emailSelection.emails.size}} emails selected</h1> -->
+  <h1>{{emailSelection.emails.size}} emails selected</h1>
 
   <Suspense>
     <template #default>

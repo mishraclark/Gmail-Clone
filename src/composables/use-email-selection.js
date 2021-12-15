@@ -1,4 +1,4 @@
-import { rective } from 'vue';
+import { reactive } from 'vue';
 
 let emails = reactive(new Set());
 
@@ -7,9 +7,9 @@ export const useEmailSelection = function(){
         if(emails.has(email)) {
             emails.delete(email)
         } else {
-            emails.add(email);
+            emails.add(email)
         }
-    };
+    }
     return{
         emails,
         toggle

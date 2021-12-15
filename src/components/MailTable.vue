@@ -1,66 +1,53 @@
 <template>
-  <h1>{{emailSelection.emails.size}} emails selected</h1>
+  <BulkActionBar :emails="unarchivedEmails" />
   <table class="mail-table">
     <tbody>
       <tr v-for="email in unarchivedEmails"
-          :data-test="`email-row-${email.id}`"
           :key="email.id"
-          :class="['clickable', email.read ? 'read' : '']"
-          >
+          :class="['clickable', email.read ? 'read' : '']">
         <td>
           <input type="checkbox"
-              @click="emailSelection.toggle(email)"
-              :selected="emailSelection.emails.has(email)" />
+                 @click="emailSelection.toggle(email)"
+                 :checked="emailSelection.emails.has(email)" />
         </td>
         <td @click="openEmail(email)">{{email.from}}</td>
         <td @click="openEmail(email)">
           <p><strong>{{email.subject}}</strong> - {{email.body}}</p>
-        </td >
-        <td @click="openEmail(email)" class="date">{{format(new Date(email.sentAt), 'MMM do yyyy')}}</td>
+        </td>
+        <td class="date" @click="openEmail(email)">
+          {{format(new Date(email.sentAt), 'MMM do yyyy')}}
+        </td>
         <td><button @click="archiveEmail(email)">Archive</button></td>
       </tr>
     </tbody>
   </table>
-    <ModalView v-if="openedEmail" @closeModal="openedEmail = null">
-        <MailView :email="openedEmail" @changeEmail="changeEmail" />
-    </ModalView>
-  <div v-if="openedEmail">
-     {{openedEmail.subject}} 
-  </div>
+  <ModalView v-if="openedEmail" @closeModal="openedEmail = null">
+    <MailView :email="openedEmail" @changeEmail="changeEmail" />
+  </ModalView>
 </template>
 
 <script>
   import { format } from 'date-fns';
   import axios from 'axios';
-  import MailView from '@/components/MailView.vue'
-  import ModalView from '@/components/ModalView.vue'
-  import { reactive } from 'vue';
+  import MailView from '@/components/MailView.vue';
+  import ModalView from '@/components/ModalView.vue';
+  import { ref } from 'vue';
+  import useEmailSelection from '@/composables/use-email-selection'
+  import BulkActionBar from './BulkActionBar.vue';
   export default {
     async setup(){
       let {data: emails} = await axios.get('http://localhost:3000/emails')
-
-      let selected = reactive(new Set())
-      let emailSelection = {
-        emails: selected,
-        toggle(email) {
-          if(selected.has(email)) {
-            selected.delete(email)
-          } else {
-            selected.add(email)
-          }
-          console.log(selected)
-        }
-      }
       return {
-        emailSelection,
+        emailSelection: useEmailSelection(),
         format,
-        emails,
-        openedEmail: null
+        emails: ref(emails),
+        openedEmail: ref(null)
       }
     },
     components: {
-        MailView,
-        ModalView
+      MailView,
+      ModalView,
+      BulkActionBar
     },
     computed: {
       sortedEmails() {
@@ -79,8 +66,6 @@
           email.read = true
           this.updateEmail(email)
         }
-        
-      
       },
       archiveEmail(email) {
         email.archived = true
@@ -88,11 +73,10 @@
       },
       changeEmail({toggleRead, toggleArchive, save, closeModal, changeIndex}) {
         let email = this.openedEmail
-        if(toggleRead) {email.read = !email.read}
-        if(toggleArchive) {email.archived = !email.archived}
-        if(save) { this.updateEmail(email)}
-        if(closeModal) {this.openedEmail = null}
-
+        if(toggleRead) { email.read = !email.read }
+        if(toggleArchive) { email.archived = !email.archived }
+        if(save) { this.updateEmail(email) }
+        if(closeModal) { this.openedEmail = null }
         if(changeIndex) {
           let emails = this.unarchivedEmails
           let currentIndex = emails.indexOf(this.openedEmail)

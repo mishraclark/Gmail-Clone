@@ -1,0 +1,9 @@
+{
+    "componentFolder": "test/component",
+    "fixturesFolder": "test/support/fixtures",
+    "integrationFolder": "test/integration",
+    "pluginsFile": "test/support/plugins.js",
+    "supportFile": "test/support/index.js",
+    "baseUrl": "http://localhost:3000",
+    "testFiles": "**/*.spec.js"
+  }

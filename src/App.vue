@@ -1,8 +1,13 @@
 <template>
+<!-- Title of the page -->
   <h1>VMail Inbox</h1>
 
-  
-
+<!--
+@suspense
+shows the emails returned from the server when they arrive
+displays a loading message in the interim
+@suspense 
+-->
   <Suspense>
     <template #default>
       <MailTable />
@@ -18,6 +23,12 @@ import MailTable from '@/components/MailTable.vue';
 import useEmailSelection from './composables/use-email-selection';
 import BulkActionBar from './components/BulkActionBar.vue';
 export default {
+
+// root app passed to main.js
+// @requires ./MailTable.vue
+// @requires ./BulkCationBar.vue
+// @requires ./use-email-selection
+
   name: 'App',
   components: {
     MailTable,

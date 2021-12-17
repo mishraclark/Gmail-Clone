@@ -1,4 +1,12 @@
 <template>
+
+<!-- 
+inbox and archive navigation buttons
+@event click
+@property SelectedScreen == buttonInnerHtml
+@disabled when SelectedScreen = buttonInnerHtml 
+-->
+
   <button @click="selectScreen('inbox')"
           :disabled="selectedScreen == 'inbox'">Inbox</button>
   <button @click="selectScreen(archive)"
